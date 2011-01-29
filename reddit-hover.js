@@ -134,7 +134,12 @@ function populateHover(url) {
 		dataType: 'json',
 		success: function(data) {
 			var selftext = data[0].data.children[0].data.selftext_html;
-			$('#reddit-hover').html(html_entity_decode(selftext));
+			if(selftext != null) {
+				$('#reddit-hover').html(html_entity_decode(selftext));
+			} else {
+				hideHover();
+				lastUrl = '';
+			}
 		}
 	});
 }
