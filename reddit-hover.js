@@ -81,11 +81,11 @@ function handleMouseEnter(e) {
 	}
 	
 	showTimeout = setTimeout(function() {
-	if(lastUrl != url) {
-		positionHover($(e.target));
-		populateHover(url);
-	}
+		if(lastUrl != url) {
+			populateHover(url);
+		}
 
+		positionHover($(e.target));
 		showHover();
 		showTimeout = null;
 	}, 250);
