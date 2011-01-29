@@ -136,7 +136,9 @@ function populateHover(url) {
 		dataType: 'json',
 		success: function(data) {
 			var selftext = data[0].data.children[0].data.selftext_html;
-			if(selftext != null) {
+			var permalink = data[0].data.children[0].data.permalink;
+	
+			if(selftext != null && permalink == lastUrl) {
 				$('#reddit-hover').html(html_entity_decode(selftext));
 			} else {
 				hideHover();
