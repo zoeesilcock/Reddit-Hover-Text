@@ -140,7 +140,7 @@ function populateHover(url) {
 	
 			if(selftext != null && permalink == lastUrl) {
 				$('#reddit-hover').html(html_entity_decode(selftext));
-			} else {
+			} else if(selftext == null) {
 				hideHover();
 				lastUrl = '';
 				$('#reddit-hover').html('');
