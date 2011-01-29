@@ -74,21 +74,23 @@ function initHover() {
  **/
 function handleMouseEnter(e) {
 	var url = $(e.target).attr('href');
+	var showDelay = 250;
 
 	if(hideTimeout != null && lastUrl == url) {
 		clearTimeout(hideTimeout);
 		hideTimeout = null;
+		showDelay = 0;
 	}
 	
 	showTimeout = setTimeout(function() {
+		showTimeout = null;
 		if(lastUrl != url) {
 			populateHover(url);
 		}
 
 		positionHover($(e.target));
 		showHover();
-		showTimeout = null;
-	}, 250);
+	}, showDelay);
 }
 
 /**
@@ -102,8 +104,8 @@ function handleMouseLeave(e) {
 		showTimeout = null;
 	} else {
 		hideTimeout = setTimeout(function() {
-			hideHover();
 			hideTimeout = null;
+			hideHover();
 		}, 250);
 	}
 }
