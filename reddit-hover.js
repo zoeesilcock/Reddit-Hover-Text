@@ -141,6 +141,7 @@ function populateHover(url) {
 			} else {
 				hideHover();
 				lastUrl = '';
+				$('#reddit-hover').html('');
 			}
 		}
 	});
