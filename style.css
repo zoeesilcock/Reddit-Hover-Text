@@ -17,3 +17,15 @@ div#reddit-hover p {
 div#reddit-hover img {
 	margin: 10px;
 }
+
+div#reddit-hover .optionsDiv {
+  margin-top: 5px;
+}
+
+div#reddit-hover .optionsDiv a {
+  margin-right: 10px;
+}
+
+div#reddit-hover .optionsDiv a.disableVisited {
+  color: orangeRed;
+}

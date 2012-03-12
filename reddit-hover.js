@@ -1,24 +1,24 @@
 /**
  * Copyright 2011 Zoee Silcock (zoeetrope.com)
- * 
+ *
  * This file is part of Reddit Hover Text.
- * 
+ *
  * Reddit Hover Text is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Reddit Hover Text is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Reddit Hover Text. If not, see <http://www.gnu.org/licenses/>.
  **/
 
 /**
- * The timeout variableis we use to delay showing and hiding of the hover div.
+ * The timeout variable we use to delay showing and hiding of the hover div.
  **/
 var hideTimeout;
 var showTimeout;
@@ -81,7 +81,7 @@ function handleMouseEnter(e) {
 		hideTimeout = null;
 		showDelay = 0;
 	}
-	
+
 	showTimeout = setTimeout(function() {
 		showTimeout = null;
 		if(lastUrl != url) {
@@ -122,7 +122,7 @@ function positionHover(element) {
 }
 
 /**
- * This is where we actually put content into the hover div. We start by 
+ * This is where we actually put content into the hover div. We start by
  * placing our loading gif so the user knows that we are retreiving the data.
  * Next we trigger an ajax call to the link and extract the selftext_html
  * from the JSON result.
@@ -137,9 +137,14 @@ function populateHover(url) {
 		success: function(data) {
 			var selftext = data[0].data.children[0].data.selftext_html;
 			var permalink = data[0].data.children[0].data.permalink;
-	
+
 			if(selftext != null && permalink == lastUrl) {
 				$('#reddit-hover').html(html_entity_decode(selftext));
+        $('#reddit-hover').prepend(getOptionsDiv());
+        
+        if(markAsVisitedEnabled()) {
+          chrome.extension.sendRequest({action: 'addUrlToHistory', url: 'http://www.reddit.com' + url});
+        }
 			} else if(selftext == null) {
 				hideHover();
 				lastUrl = '';
@@ -165,13 +170,64 @@ function hideHover() {
 	$('#reddit-hover').hide();
 }
 
+function getOptionsDiv() {
+  var div = $('<div class="optionsDiv"></div>');
+  var markAsVisited = $('<a href="#">Mark as visited</a>');
+  var visitedHelp = $('<span>(Click to toggle marking links as visited.)</span>');
+
+  if(!markAsVisitedEnabled()) {
+    markAsVisited.addClass('enableisited');
+  } else {
+    markAsVisited.addClass('disableVisited');
+  }
+
+  $(markAsVisited).bind('click', function(event) {
+    toggleMarkAsVisited();
+
+    if(!markAsVisitedEnabled()) {
+      $(this).addClass('enableVisited');
+      $(this).removeClass('disableVisited');
+    } else {
+      $(this).addClass('disableVisited');
+      $(this).removeClass('enableVisited');
+      
+      chrome.extension.sendRequest({action: 'addUrlToHistory', url: lastUrl});
+    }
+  });
+
+  $(markAsVisited).bind('mouseenter', {help: visitedHelp}, function(event) {
+    $(event.data.help).show();
+  });
+  $(markAsVisited).bind('mouseleave', {help: visitedHelp}, function(event) {
+    $(event.data.help).hide();
+  });
+
+  $(div).prepend(visitedHelp);
+  $(visitedHelp).hide();
+  $(div).prepend(markAsVisited);
+  
+  return div;
+}
+
+function toggleMarkAsVisited() {
+  if(markAsVisitedEnabled()) {
+    localStorage.setItem('markAsVisited', false);
+  } else {
+    localStorage.setItem('markAsVisited', true);
+  }
+}
+
+function markAsVisitedEnabled() {
+  return localStorage.getItem('markAsVisited') == 'true';
+}
+
 /**
  * A helper function for translating html entities into their real characters
- * since we are using the html markup that reddit provides to format the data 
+ * since we are using the html markup that reddit provides to format the data
  * in the hover div.
  **/
-function html_entity_decode(str) { 
-	var ta=document.createElement("textarea"); 
-	ta.innerHTML=str.replace('//g',">"); 
-	return ta.value; 
+function html_entity_decode(str) {
+	var ta=document.createElement("textarea");
+	ta.innerHTML=str.replace('//g',">");
+	return ta.value;
 }

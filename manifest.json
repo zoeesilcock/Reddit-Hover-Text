@@ -1,6 +1,6 @@
 {
 	"name": "Reddit Hover Text",
-	"version":"0.1",
+	"version":"0.2",
 	"description": "Shows the content of a reddit text post when you hover on it's link.",
 	"icons": {
 		"16": "icon16.png",
@@ -8,7 +8,11 @@
 		"128": "icon128.png"
 	},
 	"default_local": "en",
+  "permissions": [
+    "history"
+  ],
 	
+  "background_page": "background.html",
 	"content_scripts": [ {
 		"matches": ["http://www.reddit.com/*"],
 		"css": ["style.css"],
