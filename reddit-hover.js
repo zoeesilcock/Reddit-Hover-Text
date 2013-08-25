@@ -52,7 +52,7 @@ function initHover() {
 	$('#reddit-hover').hide();
 
 	$('#reddit-hover').hover(function() {
-		if(hideTimeout != null) {
+		if(hideTimeout !== null) {
 			// Don't hide the hover if the mouse enters the hover.
 			clearTimeout(hideTimeout);
 			hideTimeout = null;
@@ -65,15 +65,17 @@ function initHover() {
  * if there is a hideHover() pending, if so we will cancel it. Next we will
  * check if we need to request new data via ajax. Finally we show the hover
  * with a 250 ms delay to avoid unintended triggers.
+ *
+ * @argument {object} e The event object.
  **/
 function handleMouseEnter(e) {
 	var url = $(e.target).attr('href');
 	var showDelay = 250;
   var regex = new RegExp('/r/.*/comments');
 
-  if (regex.exec(url) != null &&
-      $(e.target).closest('.entry').find('.expando-button.selftext').length == 1) {
-    if(hideTimeout != null && lastUrl == url) {
+  if (regex.exec(url) !== null &&
+      $(e.target).closest('.entry').find('.expando-button.selftext').length === 1) {
+    if(hideTimeout !== null && lastUrl === url) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
       showDelay = 0;
@@ -81,7 +83,7 @@ function handleMouseEnter(e) {
 
     showTimeout = setTimeout(function() {
       showTimeout = null;
-      if(lastUrl != url) {
+      if(lastUrl !== url) {
         populateHover(url);
       }
 
@@ -95,9 +97,11 @@ function handleMouseEnter(e) {
  * This is the event handler for mouseleave both on links and on the actual
  * hover div. We use a 250 ms timeout which allows the user to move from the
  * link to the hover and back without hiding the hover.
+ *
+ * @argument {object} e The event object.
  **/
 function handleMouseLeave(e) {
-	if(showTimeout != null) {
+	if(showTimeout !== null) {
 		clearTimeout(showTimeout);
 		showTimeout = null;
 	} else {
@@ -111,6 +115,9 @@ function handleMouseLeave(e) {
 /**
  * This function positions the hover div based on the location of the link
  * it is attached to.
+ *
+ * @argument {object} element The element used to decide the placement of the
+ * hover div.
  **/
 function positionHover(element) {
 	var position = $(element).offset();
@@ -124,6 +131,8 @@ function positionHover(element) {
  * placing our loading gif so the user knows that we are retreiving the data.
  * Next we trigger an ajax call to the link and extract the selftext_html
  * from the JSON result.
+ *
+ * @argument {string} url The URL to fetch post data from.
  **/
 function populateHover(url) {
 	lastUrl = url;
@@ -136,14 +145,14 @@ function populateHover(url) {
 			var selftext = data[0].data.children[0].data.selftext_html;
 			var permalink = data[0].data.children[0].data.permalink;
 
-			if(selftext != null && permalink == lastUrl) {
+			if(selftext !== null && permalink === lastUrl) {
 				$('#reddit-hover').html(html_entity_decode(selftext));
         $('#reddit-hover').prepend(getOptionsDiv());
 
         if(markAsVisitedEnabled()) {
           chrome.extension.sendRequest({action: 'addUrlToHistory', url: 'http://www.reddit.com' + url});
         }
-			} else if(selftext == null) {
+			} else if(selftext === null) {
 				hideHover();
 				lastUrl = '';
 				$('#reddit-hover').html('');
@@ -216,16 +225,18 @@ function toggleMarkAsVisited() {
 }
 
 function markAsVisitedEnabled() {
-  return localStorage.getItem('markAsVisited') == 'true';
+  return localStorage.getItem('markAsVisited') === 'true';
 }
 
 /**
  * A helper function for translating html entities into their real characters
  * since we are using the html markup that reddit provides to format the data
  * in the hover div.
+ *
+ * @argument {string} str The input string.
  **/
 function html_entity_decode(str) {
-	var ta=document.createElement("textarea");
+	var ta = document.createElement("textarea");
 	ta.innerHTML=str.replace('//g',">");
 	return ta.value;
 }
