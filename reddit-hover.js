@@ -27,6 +27,11 @@ var showTimeout;
  * asking for the same data several times in a row.
  **/
 var lastUrl;
+/**
+ * The link_id whose data we have in the hover div currently, it's used to avoid
+ * asking for the same data several times in a row.
+ **/
+var lastLink;
 
 /**
  * This is where the magic starts as soon as the page has finished loading.
@@ -69,13 +74,15 @@ function initHover() {
  * @argument {object} e The event object.
  **/
 function handleMouseEnter(e) {
+  var thingElement = $(e.target).closest('.thing');
+  var linkId = $(thingElement).data('fullname');
 	var url = $(e.target).attr('href');
 	var showDelay = 250;
   var regex = new RegExp('/r/.*/comments');
 
   if (regex.exec(url) !== null &&
       $(e.target).closest('.entry').find('.expando-button.selftext').length === 1) {
-    if(hideTimeout !== null && lastUrl === url) {
+    if(hideTimeout !== null && lastLink !== linkId) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
       showDelay = 0;
@@ -83,8 +90,9 @@ function handleMouseEnter(e) {
 
     showTimeout = setTimeout(function() {
       showTimeout = null;
-      if(lastUrl !== url) {
-        populateHover(url);
+      if (lastLink !== linkId) {
+        lastUrl = 'http://www.reddit.com' + url;
+        populateHover(linkId);
       }
 
       positionHover($(e.target));
@@ -132,33 +140,32 @@ function positionHover(element) {
  * Next we trigger an ajax call to the link and extract the selftext_html
  * from the JSON result.
  *
- * @argument {string} url The URL to fetch post data from.
+ * @argument {string} linkId The id of the link to fetch.
  **/
-function populateHover(url) {
-	lastUrl = url;
+function populateHover(linkId) {
+	lastLink = linkId;
 	$('#reddit-hover').html('<img src="' + chrome.extension.getURL("ajax-loader.gif") + '" />');
 
-	$.ajax({
-		url: url + '.json',
-		dataType: 'json',
-		success: function(data) {
-			var selftext = data[0].data.children[0].data.selftext_html;
-			var permalink = data[0].data.children[0].data.permalink;
+  $.ajax({
+    url: 'http://www.reddit.com/api/expando',
+    type: 'POST',
+    data: {
+      'link_id': linkId
+    },
+    success: function(data) {
+      $('#reddit-hover').html(html_entity_decode(data));
+      $('#reddit-hover').prepend(getOptionsDiv());
 
-			if(selftext !== null && permalink === lastUrl) {
-				$('#reddit-hover').html(html_entity_decode(selftext));
-        $('#reddit-hover').prepend(getOptionsDiv());
-
-        if(markAsVisitedEnabled()) {
-          chrome.extension.sendRequest({action: 'addUrlToHistory', url: 'http://www.reddit.com' + url});
-        }
-			} else if(selftext === null) {
-				hideHover();
-				lastUrl = '';
-				$('#reddit-hover').html('');
-			}
-		}
-	});
+      if (markAsVisitedEnabled()) {
+        chrome.extension.sendRequest({action: 'addUrlToHistory', url: lastUrl});
+      }
+    }
+  }).fail(function() {
+    hideHover();
+    lastUrl = '';
+    lastLink = null;
+    $('#reddit-hover').html('');
+  });
 }
 
 /**
@@ -189,6 +196,7 @@ function getOptionsDiv() {
   }
 
   $(markAsVisited).bind('click', function(event) {
+    event.preventDefault();
     toggleMarkAsVisited();
 
     if(!markAsVisitedEnabled()) {
