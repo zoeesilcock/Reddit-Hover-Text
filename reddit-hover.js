@@ -37,14 +37,8 @@ var lastUrl;
 $(document).ready(function() {
 	initHover();
 
-	var regex = new RegExp('/r/.*/comments');
-	$("a.title").each(function(i) {
-		var url = $(this).attr('href');
-
-		if(regex.exec(url) != null) {
-			$(this).hover(handleMouseEnter, handleMouseLeave);
-		}
-	});
+  $('div.content').on('mouseenter', 'a.title', handleMouseEnter);
+  $('div.content').on('mouseleave', 'a.title', handleMouseLeave);
 });
 
 /**
@@ -75,22 +69,26 @@ function initHover() {
 function handleMouseEnter(e) {
 	var url = $(e.target).attr('href');
 	var showDelay = 250;
+  var regex = new RegExp('/r/.*/comments');
 
-	if(hideTimeout != null && lastUrl == url) {
-		clearTimeout(hideTimeout);
-		hideTimeout = null;
-		showDelay = 0;
-	}
+  if (regex.exec(url) != null &&
+      $(e.target).closest('.entry').find('.expando-button.selftext').length == 1) {
+    if(hideTimeout != null && lastUrl == url) {
+      clearTimeout(hideTimeout);
+      hideTimeout = null;
+      showDelay = 0;
+    }
 
-	showTimeout = setTimeout(function() {
-		showTimeout = null;
-		if(lastUrl != url) {
-			populateHover(url);
-		}
+    showTimeout = setTimeout(function() {
+      showTimeout = null;
+      if(lastUrl != url) {
+        populateHover(url);
+      }
 
-		positionHover($(e.target));
-		showHover();
-	}, showDelay);
+      positionHover($(e.target));
+      showHover();
+    }, showDelay);
+  }
 }
 
 /**
@@ -141,7 +139,7 @@ function populateHover(url) {
 			if(selftext != null && permalink == lastUrl) {
 				$('#reddit-hover').html(html_entity_decode(selftext));
         $('#reddit-hover').prepend(getOptionsDiv());
-        
+
         if(markAsVisitedEnabled()) {
           chrome.extension.sendRequest({action: 'addUrlToHistory', url: 'http://www.reddit.com' + url});
         }
@@ -190,7 +188,7 @@ function getOptionsDiv() {
     } else {
       $(this).addClass('disableVisited');
       $(this).removeClass('enableVisited');
-      
+
       chrome.extension.sendRequest({action: 'addUrlToHistory', url: lastUrl});
     }
   });
@@ -205,7 +203,7 @@ function getOptionsDiv() {
   $(div).prepend(visitedHelp);
   $(visitedHelp).hide();
   $(div).prepend(markAsVisited);
-  
+
   return div;
 }
 
