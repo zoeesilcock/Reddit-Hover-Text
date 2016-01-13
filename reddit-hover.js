@@ -40,7 +40,7 @@ var lastLink;
  * mouseenter and mouseleave to the text submissions.
  **/
 $(document).ready(function() {
-	initHover();
+  initHover();
 
   $('div.content').on('mouseenter', 'a.title', handleMouseEnter);
   $('div.content').on('mouseleave', 'a.title', handleMouseLeave);
@@ -53,16 +53,16 @@ $(document).ready(function() {
  * in the content.
  **/
 function initHover() {
-	$('body').append('<div id="reddit-hover">a</div>');
-	$('#reddit-hover').hide();
+  $('body').append('<div id="reddit-hover">a</div>');
+  $('#reddit-hover').hide();
 
-	$('#reddit-hover').hover(function() {
-		if(hideTimeout !== null) {
-			// Don't hide the hover if the mouse enters the hover.
-			clearTimeout(hideTimeout);
-			hideTimeout = null;
-		}
-	}, handleMouseLeave);
+  $('#reddit-hover').hover(function() {
+    if(hideTimeout !== null) {
+      // Don't hide the hover if the mouse enters the hover.
+      clearTimeout(hideTimeout);
+      hideTimeout = null;
+    }
+  }, handleMouseLeave);
 }
 
 /**
@@ -76,8 +76,8 @@ function initHover() {
 function handleMouseEnter(e) {
   var thingElement = $(e.target).closest('.thing');
   var linkId = $(thingElement).data('fullname');
-	var url = $(e.target).attr('href');
-	var showDelay = 250;
+  var url = $(e.target).attr('href');
+  var showDelay = 250;
   var regex = new RegExp('/r/.*/comments');
 
   if (regex.exec(url) !== null &&
@@ -91,8 +91,8 @@ function handleMouseEnter(e) {
     showTimeout = setTimeout(function() {
       showTimeout = null;
       if (lastLink !== linkId) {
-        lastUrl = 'http://www.reddit.com' + url;
-        populateHover(linkId);
+	lastUrl = 'http://www.reddit.com' + url;
+	populateHover(linkId);
       }
 
       positionHover($(e.target));
@@ -109,15 +109,15 @@ function handleMouseEnter(e) {
  * @argument {object} e The event object.
  **/
 function handleMouseLeave(e) {
-	if(showTimeout !== null) {
-		clearTimeout(showTimeout);
-		showTimeout = null;
-	} else {
-		hideTimeout = setTimeout(function() {
-			hideTimeout = null;
-			hideHover();
-		}, 250);
-	}
+  if(showTimeout !== null) {
+    clearTimeout(showTimeout);
+    showTimeout = null;
+  } else {
+    hideTimeout = setTimeout(function() {
+      hideTimeout = null;
+      hideHover();
+    }, 250);
+  }
 }
 
 /**
@@ -128,10 +128,10 @@ function handleMouseLeave(e) {
  * hover div.
  **/
 function positionHover(element) {
-	var position = $(element).offset();
+  var position = $(element).offset();
 
-	$('#reddit-hover').css('left', position.left);
-	$('#reddit-hover').css('top', position.top + $(element).height() + 2);
+  $('#reddit-hover').css('left', position.left);
+  $('#reddit-hover').css('top', position.top + $(element).height() + 2);
 }
 
 /**
@@ -143,8 +143,8 @@ function positionHover(element) {
  * @argument {string} linkId The id of the link to fetch.
  **/
 function populateHover(linkId) {
-	lastLink = linkId;
-	$('#reddit-hover').html('<img src="' + chrome.extension.getURL("ajax-loader.gif") + '" />');
+  lastLink = linkId;
+  $('#reddit-hover').html('<img src="' + chrome.extension.getURL("ajax-loader.gif") + '" />');
 
   $.ajax({
     url: 'http://www.reddit.com/api/expando',
@@ -157,7 +157,7 @@ function populateHover(linkId) {
       $('#reddit-hover').prepend(getOptionsDiv());
 
       if (markAsVisitedEnabled()) {
-        chrome.extension.sendRequest({action: 'addUrlToHistory', url: lastUrl});
+	chrome.extension.sendRequest({action: 'addUrlToHistory', url: lastUrl});
       }
     }
   }).fail(function() {
@@ -173,7 +173,7 @@ function populateHover(linkId) {
  * put an animation on it later.
  **/
 function showHover() {
-	$('#reddit-hover').show();
+  $('#reddit-hover').show();
 }
 
 /**
@@ -181,7 +181,7 @@ function showHover() {
  * put an animation on it later.
  **/
 function hideHover() {
-	$('#reddit-hover').hide();
+  $('#reddit-hover').hide();
 }
 
 function getOptionsDiv() {
@@ -244,7 +244,7 @@ function markAsVisitedEnabled() {
  * @argument {string} str The input string.
  **/
 function html_entity_decode(str) {
-	var ta = document.createElement("textarea");
-	ta.innerHTML=str.replace('//g',">");
-	return ta.value;
+  var ta = document.createElement("textarea");
+  ta.innerHTML=str.replace('//g',">");
+  return ta.value;
 }
