@@ -91,7 +91,7 @@ function handleMouseEnter(e) {
     showTimeout = setTimeout(function() {
       showTimeout = null;
       if (lastLink !== linkId) {
-	lastUrl = 'http://www.reddit.com' + url;
+	lastUrl = window.location.protocol + '//www.reddit.com' + url;
 	populateHover(linkId);
       }
 
@@ -147,7 +147,7 @@ function populateHover(linkId) {
   $('#reddit-hover').html('<img src="' + chrome.extension.getURL("ajax-loader.gif") + '" />');
 
   $.ajax({
-    url: 'http://www.reddit.com/api/expando',
+    url: window.location.protocol + '//www.reddit.com/api/expando',
     type: 'POST',
     data: {
       'link_id': linkId
