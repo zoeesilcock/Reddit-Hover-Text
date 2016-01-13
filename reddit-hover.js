@@ -42,8 +42,8 @@ var lastLink;
 $(document).ready(function() {
   initHover();
 
-  $('div.content').on('mouseenter', 'a.title', handleMouseEnter);
-  $('div.content').on('mouseleave', 'a.title', handleMouseLeave);
+  $('div.entry').on('mouseenter', 'a.title', handleMouseEnter);
+  $('div.entry').on('mouseleave', 'a.title', handleMouseLeave);
 });
 
 /**
