@@ -1,6 +1,6 @@
 {
   "name": "Reddit Hover Text",
-  "version":"0.5",
+  "version":"0.6",
   "manifest_version": 2,
   "description": "Shows the content of a reddit text post when you hover on it's link.",
   "icons": {
@@ -20,5 +20,5 @@
     "js": ["jquery.min.js", "reddit-hover.js"],
     "run_at": "document_start"
   } ],
-  "web_accessible_resources": ["ajax-loader.gif"]
+  "web_accessible_resources": ["ajax-loader.gif", "ajax-loader-night.gif"]
 }

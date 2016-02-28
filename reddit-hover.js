@@ -144,7 +144,7 @@ function positionHover(element) {
  **/
 function populateHover(linkId) {
   lastLink = linkId;
-  $('#reddit-hover').html('<img src="' + chrome.extension.getURL("ajax-loader.gif") + '" />');
+  $('#reddit-hover').html('<img src="' + chrome.extension.getURL(getLoadingImage()) + '" />');
 
   $.ajax({
     url: window.location.protocol + '//www.reddit.com/api/expando',
@@ -182,6 +182,14 @@ function showHover() {
  **/
 function hideHover() {
   $('#reddit-hover').hide();
+}
+
+function getLoadingImage() {
+  if ($('body.res-nightmode').length) {
+    return "ajax-loader-night.gif";
+  } else {
+    return "ajax-loader.gif";
+  }
 }
 
 function getOptionsDiv() {

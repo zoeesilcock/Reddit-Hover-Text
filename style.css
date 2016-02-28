@@ -10,6 +10,11 @@ div#reddit-hover {
   border-top-right-radius: 7px 7px;
 }
 
+.res-nightmode #reddit-hover {
+  background-color: #373737;
+  color: #ccc;
+}
+
 div#reddit-hover p {
   margin: 5px 0px;
 }
