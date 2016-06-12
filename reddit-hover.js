@@ -252,7 +252,5 @@ function markAsVisitedEnabled() {
  * @argument {string} str The input string.
  **/
 function html_entity_decode(str) {
-  var ta = document.createElement("textarea");
-  ta.innerHTML=str.replace('//g',">");
-  return ta.value;
+  return $('<textarea />').html(str).text();
 }
