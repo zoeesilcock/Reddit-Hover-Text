@@ -15,7 +15,7 @@
     "scripts": ["jquery.min.js", "background.js"]
   },
   "content_scripts": [ {
-    "matches": ["http://www.reddit.com/*", "https://www.reddit.com/*"],
+    "matches": ["http://www.reddit.com/*", "https://www.reddit.com/*", "http://old.reddit.com/*", "https://old.reddit.com/*"],
     "css": ["style.css"],
     "js": ["jquery.min.js", "reddit-hover.js"],
     "run_at": "document_start"
