@@ -82,7 +82,7 @@ function handleMouseEnter(e) {
 
   if (regex.exec(url) !== null &&
       $(e.target).closest('.entry').find('.expando-button.selftext').length === 1) {
-    if(hideTimeout !== null && lastLink !== linkId) {
+    if (hideTimeout !== null && lastLink !== linkId) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
       showDelay = 0;
@@ -91,8 +91,8 @@ function handleMouseEnter(e) {
     showTimeout = setTimeout(function() {
       showTimeout = null;
       if (lastLink !== linkId) {
-	lastUrl = window.location.protocol + '//www.reddit.com' + url;
-	populateHover(linkId);
+        lastUrl = getRedditUrl() + url;
+        populateHover(linkId);
       }
 
       positionHover($(e.target));
@@ -145,9 +145,8 @@ function positionHover(element) {
 function populateHover(linkId) {
   lastLink = linkId;
   $('#reddit-hover').html('<img src="' + chrome.extension.getURL(getLoadingImage()) + '" />');
-
   $.ajax({
-    url: window.location.protocol + '//www.reddit.com/api/expando',
+    url: getRedditUrl() + '/api/expando',
     type: 'POST',
     data: {
       'link_id': linkId
@@ -157,7 +156,7 @@ function populateHover(linkId) {
       $('#reddit-hover').prepend(getOptionsDiv());
 
       if (markAsVisitedEnabled()) {
-	chrome.extension.sendRequest({action: 'addUrlToHistory', url: lastUrl});
+        chrome.extension.sendRequest({ action: 'addUrlToHistory', url: lastUrl });
       }
     }
   }).fail(function() {
@@ -182,6 +181,15 @@ function showHover() {
  **/
 function hideHover() {
   $('#reddit-hover').hide();
+}
+
+/**
+ * We use this to build our reddit URLs. This avoids making cross origin
+ * requests when fetching from the API and marks the correct URL as
+ * visited when that option is enabled.
+ */
+function getRedditUrl() {
+  return window.location.origin;
 }
 
 function getLoadingImage() {
