@@ -145,31 +145,30 @@ function positionHover(element) {
 function populateHover(linkId) {
   lastLink = linkId;
   $('#reddit-hover').html('<img src="' + chrome.extension.getURL(getLoadingImage()) + '" />');
-  fetch(getRedditUrl() + '/api/expando', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-      },
-      body: `link_id=${linkId}`,
-      mode: 'same-origin'
-    })
-    .then(async data => {
-      $('#reddit-hover').html(html_entity_decode(await data.text()));
-      $('#reddit-hover').prepend(getOptionsDiv());
+  chrome.runtime.sendMessage(
+    {
+      contentScriptQuery: 'fetchPostText',
+      linkId: linkId
+    },
+    function(text) {
+      if (text !== false) {
+        $('#reddit-hover').html(html_entity_decode(text));
+        $('#reddit-hover').prepend(getOptionsDiv());
 
-      if (markAsVisitedEnabled()) {
-        chrome.extension.sendRequest({
-          action: 'addUrlToHistory',
-          url: lastUrl
-        });
+        if (markAsVisitedEnabled()) {
+          chrome.extension.sendRequest({
+            action: 'addUrlToHistory',
+            url: lastUrl
+          });
+        }
+      } else {
+        hideHover();
+        lastUrl = '';
+        lastLink = null;
+        $('#reddit-hover').html('');
       }
-    }).catch(e => {
-      hideHover();
-      lastUrl = '';
-      lastLink = null;
-      $('#reddit-hover').html('');
-    })
+    }
+  );
 }
 
 /**
