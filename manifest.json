@@ -1,7 +1,7 @@
 {
   "name": "Reddit Hover Text",
-  "version":"0.9.1",
-  "manifest_version": 2,
+  "version":"1.0.0",
+  "manifest_version": 3,
   "description": "Shows the content of a reddit text post when you hover on it's link.",
   "icons": {
     "16": "icon16.png",
@@ -12,13 +12,35 @@
     "history"
   ],
   "background": {
-    "scripts": ["jquery.min.js", "background.js"]
+    "service_worker": "service-worker.js",
+    "type": "module"
   },
-  "content_scripts": [ {
-    "matches": ["http://www.reddit.com/*", "https://www.reddit.com/*", "http://old.reddit.com/*", "https://old.reddit.com/*"],
-    "css": ["style.css"],
-    "js": ["jquery.min.js", "reddit-hover.js"],
-    "run_at": "document_start"
-  } ],
-  "web_accessible_resources": ["ajax-loader.gif", "ajax-loader-night.gif"]
+  "content_scripts": [
+    {
+      "matches": [
+        "http://reddit.com/*",
+        "https://reddit.com/*",
+        "http://www.reddit.com/*",
+        "https://www.reddit.com/*",
+        "http://old.reddit.com/*",
+        "https://old.reddit.com/*"
+      ],
+      "css": ["style.css"],
+      "js": ["jquery.min.js", "reddit-hover.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["ajax-loader.gif", "ajax-loader-night.gif"],
+      "matches": [
+        "http://reddit.com/*",
+        "https://reddit.com/*",
+        "http://www.reddit.com/*",
+        "https://www.reddit.com/*",
+        "http://old.reddit.com/*",
+        "https://old.reddit.com/*"
+      ]
+    }
+  ]
 }

@@ -144,7 +144,7 @@ function positionHover(element) {
  **/
 function populateHover(linkId) {
   lastLink = linkId;
-  $('#reddit-hover').html('<img src="' + chrome.extension.getURL(getLoadingImage()) + '" />');
+  $('#reddit-hover').html('<img src="' + chrome.runtime.getURL(getLoadingImage()) + '" />');
   chrome.runtime.sendMessage(
     {
       contentScriptQuery: 'fetchPostText',
@@ -156,7 +156,7 @@ function populateHover(linkId) {
         $('#reddit-hover').prepend(getOptionsDiv());
 
         if (markAsVisitedEnabled()) {
-          chrome.extension.sendRequest({
+          chrome.runtime.sendMessage({
             action: 'addUrlToHistory',
             url: lastUrl
           });
@@ -226,7 +226,7 @@ function getOptionsDiv() {
       $(this).addClass('disableVisited');
       $(this).removeClass('enableVisited');
 
-      chrome.extension.sendRequest({
+      chrome.runtime.sendMessage({
         action: 'addUrlToHistory',
         url: lastUrl
       });
