@@ -44,6 +44,9 @@ $(document).ready(function() {
 
   $('div.content').on('mouseenter', 'a.title', handleMouseEnter);
   $('div.content').on('mouseleave', 'a.title', handleMouseLeave);
+
+  $('main.main').on('mouseenter', 'article shreddit-post', handleMouseEnterNew);
+  $('main.main').on('mouseleave', 'article shreddit-post', handleMouseLeave);
 });
 
 /**
@@ -96,6 +99,55 @@ function handleMouseEnter(e) {
       }
 
       positionHover($(e.target));
+      showHover();
+    }, showDelay);
+  }
+}
+
+/**
+ * Shows and populates the content of the hover on the new design of Reddit.
+ * This approach doesn't use an ajax request since the content is actually
+ * in the page, it just isn't visible to the user. Note that this doesn't
+ * use the regular populateHover approach for that reason.
+ *
+ * @argument {object} e The event object.
+ **/
+function handleMouseEnterNew(e) {
+  var showDelay = 250;
+  const article = $(e.target).parents('article');
+  const title = article.find('a[slot="title"]');
+  const url = title.attr('href');
+  const postContent = article.find('.feed-card-text-preview').html();
+
+  lastUrl = getRedditUrl() + url;
+
+  if (postContent) {
+    if (hideTimeout !== null && lastLink !== title) {
+      clearTimeout(hideTimeout);
+      hideTimeout = null;
+      showDelay = 0;
+    }
+
+    showTimeout = setTimeout(function() {
+      showTimeout = null;
+
+      $('#reddit-hover').html(postContent);
+      $('#reddit-hover').css('width', (article.width() - 32) + 'px');
+
+      $('#reddit-hover').css('left', article.offset().left);
+      $('#reddit-hover').css('top', title.offset().top + title.height() + 3);
+      $('#reddit-hover').addClass('text-14');
+
+      $('#reddit-hover').append(getOptionsDiv());
+
+      if (markAsVisitedEnabled()) {
+        chrome.runtime.sendMessage({
+          action: 'addUrlToHistory',
+          url: lastUrl
+        });
+      }
+
+      lastLink = title;
       showHover();
     }, showDelay);
   }
@@ -197,7 +249,7 @@ function getRedditUrl() {
 }
 
 function getLoadingImage() {
-  if ($('body.res-nightmode').length) {
+  if ($('body.res-nightmode').length || $('html.theme-dark').length) {
     return "ajax-loader-night.gif";
   } else {
     return "ajax-loader.gif";

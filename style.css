@@ -15,6 +15,21 @@ div#reddit-hover {
   color: #ccc;
 }
 
+html.theme-beta #reddit-hover {
+  background-color: #f6f8f9;
+  color: #333d42;
+}
+
+html.theme-dark #reddit-hover {
+  background-color: #181c1f;
+  color: #b7cad4;
+}
+
+html.theme-beta #reddit-hover, html.theme-dark #reddit-hover {
+  border: 0;
+  padding: 0 16px 8px 16px;
+}
+
 div#reddit-hover p {
   margin: 5px 0px;
 }
